@@ -2881,3 +2881,10 @@ video {
     max-width: 80%;
   }
 }
+
+
+.lSfe4c {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
