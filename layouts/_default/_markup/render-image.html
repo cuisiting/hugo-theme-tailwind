@@ -10,6 +10,44 @@
 <!-- get actual filename -->
 {{- $dest = path.Base $dest -}}
 
+
+
+{{/* 假设已有 $dest 变量 */}}
+
+{{/* 使用split函数按#分割URL */}}
+{{- $parts := split $dest "#" -}}
+{{- $image_para_json := dict -}}
+
+{{- if gt (len $parts) 1 -}}
+  {{- $image_para := index $parts 1 -}}
+  {{ warnf "Image parameters string: %s" $image_para -}}
+
+  {{/* 按&分割字符串 */}}
+  {{- $params := split $image_para "&" -}}
+  {{ warnf "Split parameters: %v" $params -}}
+
+  {{/* 初始化map用于存储参数键值对 */}}
+
+  {{/* 遍历$params, 分别按=分割每个参数, 存储到map中 */}}
+  {{- range $params -}}
+    {{- $keyValue := split . "=" -}}
+    {{- if eq (len $keyValue) 2 -}}
+      {{- $image_para_json = merge $image_para_json (dict (index $keyValue 0) (index $keyValue 1)) -}}
+      {{ warnf "Current image parameters JSON: %v" $image_para_json -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* 最终打印结果 */}}
+  {{- warnf "Final image parameters JSON: %v" $image_para_json -}}
+
+{{- else -}}
+  {{ warnf "No parameters found in the URL for %s." $dest -}}
+{{- end -}}
+{{- $width := index $image_para_json "width" -}}
+
+
+
+
 <div class="not-prose">
 <!-- check if it exists as a page resource -->
 {{- with (.Page.Resources.ByType "image").GetMatch ( printf "**/%s" $dest ) -}}
@@ -37,11 +75,13 @@
   </picture>
   {{- with $caption -}}<p class="text-sm text-center text-slate-500 dark:text-slate-300">{{ $caption | $.Page.RenderString }}</p>{{- end }}
 <!-- or otherwise simply load the URL -->
+
 {{- else -}}
   <figure>
     <img src="{{ .Destination | safeURL }}"
       alt="{{ .Text }}" {{ with .Title }} title="{{ . }}" {{ end }}
       loading="lazy"
+      width="{{ $width }}"
     >
   {{- with $caption -}}<figcaption class="text-sm text-center text-slate-500 dark:text-slate-300">{{ $caption | $.Page.RenderString }}</figcaption>{{- end }}
   </figure>
