@@ -27,6 +27,8 @@ So we define $pages instead of $paginator (using .Paginate) to avoid confusion. 
                   <div>
                     <div style="height:192px;width:192px">
                       <div style="height:192px;width:192px">
+                        <!-- 使其在没有 .Params.blog_cover 或 .Params.blog_cover 的长度为0时不添加 <img> Hugo Logo标签 -->
+
                         {{ if and .Params.blog_cover (gt (len .Params.blog_cover) 0) }}
                         <img src="{{ index .Params.blog_cover 0 }}" style="width: 100%; height: auto;" alt="Hugo Logo">
                         {{ end }}
