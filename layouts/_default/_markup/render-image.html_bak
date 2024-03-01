@@ -12,40 +12,39 @@
 
 
 
-<!-- 解析alt中的图片参数 -->
-{{- $image_para := "" -}}
-{{ warnf "Image parameters alt: %s" $alt -}}
+{{/* 假设已有 $dest 变量 */}}
 
-{{- $splitAlt := split $alt "#" -}}
-{{- if gt (len $splitAlt) 1 -}}
-  {{- $image_para = index $splitAlt 1 -}}
-{{- end -}}
-{{ warnf "Image parameters splitAlt: %s" $splitAlt -}}
-
+{{/* 使用split函数按#分割URL */}}
+{{- $parts := split $dest "#" -}}
 {{- $image_para_json := dict -}}
-{{- if ne $image_para "" -}}
-  {{- $params := split $image_para "&amp;" -}}
+
+{{- if gt (len $parts) 1 -}}
+  {{- $image_para := index $parts 1 -}}
+  {{ warnf "Image parameters string: %s" $image_para -}}
+
+  {{/* 按&分割字符串 */}}
+  {{- $params := split $image_para "&" -}}
+  {{ warnf "Split parameters: %v" $params -}}
+
+  {{/* 初始化map用于存储参数键值对 */}}
+
+  {{/* 遍历$params, 分别按=分割每个参数, 存储到map中 */}}
   {{- range $params -}}
-    {{- $keyVal := split . "=" -}}
-    {{- if eq (len $keyVal) 2 -}}
-      {{- $image_para_json = merge $image_para_json (dict (index $keyVal 0) (index $keyVal 1)) -}}
+    {{- $keyValue := split . "=" -}}
+    {{- if eq (len $keyValue) 2 -}}
+      {{- $image_para_json = merge $image_para_json (dict (index $keyValue 0) (index $keyValue 1)) -}}
+      {{ warnf "Current image parameters JSON: %v" $image_para_json -}}
     {{- end -}}
   {{- end -}}
+
+  {{/* 最终打印结果 */}}
+  {{- warnf "Final image parameters JSON: %v" $image_para_json -}}
+
+{{- else -}}
+  {{ warnf "No parameters found in the URL for %s." $dest -}}
 {{- end -}}
+{{- $width := index $image_para_json "width" -}}
 
-<!-- 打印图片参数字符串用于debug -->
-{{ warnf "Image parameters image_para: %s" $image_para -}}
-{{ warnf "Image parameters image_para_json: %s" $image_para_json -}}
-
-
-<!-- 遍历image_para_json中的key和value -->
-{{- range $key, $value := $image_para_json -}}
-  {{ warnf "Key: %s, Value: %s\n" $key $value -}}
-{{- end -}}
-
-
-{{- $image_width := index $image_para_json "width" -}}
-{{- $image_height := index $image_para_json "height" -}}
 
 
 
@@ -82,7 +81,7 @@
     <img src="{{ .Destination | safeURL }}"
       alt="{{ .Text }}" {{ with .Title }} title="{{ . }}" {{ end }}
       loading="lazy"
-      width="{{ $image_width }}"
+      width="{{ $width }}"
     >
   {{- with $caption -}}<figcaption class="text-sm text-center text-slate-500 dark:text-slate-300">{{ $caption | $.Page.RenderString }}</figcaption>{{- end }}
   </figure>
