@@ -27,7 +27,9 @@ So we define $pages instead of $paginator (using .Paginate) to avoid confusion. 
                   <div>
                     <div style="height:192px;width:192px">
                       <div style="height:192px;width:192px">
+                        {{ if and .Params.blog_cover (gt (len .Params.blog_cover) 0) }}
                         <img src="{{ index .Params.blog_cover 0 }}" style="width: 100%; height: auto;" alt="Hugo Logo">
+                        {{ end }}
                       </div>
                     </div>
                   </div>
