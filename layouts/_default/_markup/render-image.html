@@ -8,7 +8,23 @@
 
 {{- $dest := ( .Destination | safeURL ) -}}
 <!-- get actual filename -->
+
+{{ warnf "Image parameters dest: %s" $dest -}}
+{{- $file_base_name := ( .Destination | safeURL ) -}}
 {{- $dest = path.Base $dest -}}
+{{ warnf "Image parameters file_base_name: %s" $file_base_name -}}
+
+
+{{- $prefix := "../../../static/" -}}
+{{- $hugo_build_file_path := "" -}}
+
+{{- if hasPrefix $file_base_name $prefix -}}
+  {{- $hugo_build_file_path = replace $file_base_name "../../../static" "" -}}
+
+{{- end -}}
+{{ warnf "Image parameters hugo_build_file_path: %s" $hugo_build_file_path -}}
+
+
 
 
 
@@ -79,7 +95,7 @@
 
 {{- else -}}
   <figure>
-    <img src="{{ .Destination | safeURL }}"
+    <img src="{{ $hugo_build_file_path }}"
       alt="{{ .Text }}" {{ with .Title }} title="{{ . }}" {{ end }}
       loading="lazy"
       width="{{ $image_width }}"
