@@ -28,6 +28,9 @@ So we define $pages instead of $paginator (using .Paginate) to avoid confusion. 
   <div class="flex flex-row">
     <section class="flex flex-col w-full md:w-4/5">
       {{ range (.Paginate $sortedPages).Pages }}
+
+      {{ warnf "list Params: %s" $.Params -}}
+
       <article class="flex flex-col gap-y-3 p-6 mt-6 mx-2 md:mx-0 rounded-lg shadow-md bg-white dark:bg-gray-700">
         <div data-hveid="CBEQAA">
           <div>
@@ -52,6 +55,7 @@ So we define $pages instead of $paginator (using .Paginate) to avoid confusion. 
                       </h2>
                     </div>
                     <div aria-level="3" role="heading" style="-webkit-line-clamp:3">
+                      {{ warnf "desc html image_para 1: %s" .Description -}}
 
                       {{ partial "block/desc.html" . }}
                     </div>

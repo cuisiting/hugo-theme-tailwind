@@ -1,10 +1,16 @@
+{{ warnf "desc html image_para: %s" .Description -}}
+
 {{ with .Description }}
   <h3 class="my-4 text-large text-slate-600 dark:text-slate-300">
+    {{ warnf "desc RenderString"}}
     {{ . | $.Page.RenderString }}
   </h3>
 {{ else }}
   {{ if .Truncated }}
   <h3 class="my-4 text-large text-slate-600 dark:text-slate-300">
+    {{ warnf "desc Summary"}}
+    {{ warnf "desc Summary $.Summary: %s" $.Summary -}}
+
     {{ .Summary }}
   </h3>
   {{ end }}
